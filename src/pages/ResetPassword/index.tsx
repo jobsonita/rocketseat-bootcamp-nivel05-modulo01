@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 import { FormHandles } from '@unform/core'
 import { Form } from '@unform/web'
@@ -15,7 +15,7 @@ import { useToast } from '../../context/toast'
 
 import { AnimationContainer, Background, Container, Content } from './styles'
 
-import { ApiError } from '../../services/api'
+import api, { ApiError } from '../../services/api'
 
 import getValidationErrors from '../../utils/getValidationErrors'
 
@@ -39,6 +39,8 @@ const ResetPassword: React.FC = () => {
 
   const history = useHistory()
 
+  const { search } = useLocation()
+
   const handleSubmit = useCallback(
     async ({
       password,
@@ -46,13 +48,29 @@ const ResetPassword: React.FC = () => {
     }: ResetPasswordFormData): Promise<void> => {
       formRef.current?.setErrors({})
 
+      const token = search.replace('?token=', '')
+
+      if (!token) {
+        addToast({
+          type: 'error',
+          title: 'Ação inválida',
+        })
+
+        history.push('/')
+        return
+      }
+
       try {
         await schema.validate(
           { password, password_confirmation },
           { abortEarly: false }
         )
 
-        // fazer requisição à API
+        await api.post('/password/reset', {
+          token,
+          password,
+          password_confirmation,
+        })
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           formRef.current?.setErrors(getValidationErrors(error))
@@ -87,7 +105,7 @@ const ResetPassword: React.FC = () => {
 
       history.push('/')
     },
-    [addToast, history]
+    [addToast, history, search]
   )
 
   return (

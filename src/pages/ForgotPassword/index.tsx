@@ -46,7 +46,7 @@ const ForgotPassword: React.FC = () => {
       try {
         await schema.validate({ email }, { abortEarly: false })
 
-        api.post('/password/forgot', { email })
+        await api.post('/password/forgot', { email })
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           formRef.current?.setErrors(getValidationErrors(error))
