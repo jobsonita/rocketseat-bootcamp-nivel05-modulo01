@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { FiPower, FiClock } from 'react-icons/fi'
@@ -8,6 +8,7 @@ import logoImg from '../../assets/logo.svg'
 import { useAuth } from '../../context/auth'
 
 import {
+  Appointment,
   Calendar,
   Container,
   Content,
@@ -16,12 +17,15 @@ import {
   NextAppointment,
   Profile,
   Schedule,
+  Section,
 } from './styles'
 
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth()
 
   const history = useHistory()
+
+  const [selectedDate, setSelectedDate] = useState(new Date())
 
   const handleLogout = useCallback(() => {
     signOut()
@@ -79,6 +83,62 @@ const Dashboard: React.FC = () => {
               </span>
             </div>
           </NextAppointment>
+
+          <Section>
+            <strong>Manhã</strong>
+
+            <Appointment>
+              <span>
+                <FiClock />
+                08:00
+              </span>
+
+              <div>
+                <img
+                  src={`https://api.adorable.io/avatars/80/${Math.random()}.png`}
+                  alt="Usuário"
+                />
+
+                <strong>Cliente 1</strong>
+              </div>
+            </Appointment>
+
+            <Appointment>
+              <span>
+                <FiClock />
+                09:00
+              </span>
+
+              <div>
+                <img
+                  src={`https://api.adorable.io/avatars/80/${Math.random()}.png`}
+                  alt="Usuário"
+                />
+
+                <strong>Cliente 2</strong>
+              </div>
+            </Appointment>
+          </Section>
+
+          <Section>
+            <strong>Tarde</strong>
+
+            <Appointment>
+              <span>
+                <FiClock />
+                15:00
+              </span>
+
+              <div>
+                <img
+                  src={`https://api.adorable.io/avatars/80/${Math.random()}.png`}
+                  alt="Usuário"
+                />
+
+                <strong>Cliente 3</strong>
+              </div>
+            </Appointment>
+          </Section>
         </Schedule>
         <Calendar />
       </Content>
