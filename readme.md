@@ -56,3 +56,11 @@ Finalmente, navegue até o endereço http://localhost:3000
 ## Comandos utilizados na construção do projeto
 
 Caso deseje criar um projeto similar, listo abaixo os comandos executados nesta segunda parte do projeto. Este projeto utiliza como base o projeto [jobsonita/rocketseat-bootcamp-nivel03-modulo02](https://github.com/jobsonita/rocketseat-bootcamp-nivel03-modulo02).
+
+### Sessão 03
+
+#### Aula 04
+
+```
+yarn add react-day-picker
+```
