@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 
 import { FormHandles } from '@unform/core'
@@ -15,7 +15,7 @@ import { useToast } from '../../context/toast'
 
 import { AnimationContainer, Background, Container, Content } from './styles'
 
-import { ApiError } from '../../services/api'
+import api, { ApiError } from '../../services/api'
 
 import getValidationErrors from '../../utils/getValidationErrors'
 
@@ -36,14 +36,17 @@ const ForgotPassword: React.FC = () => {
 
   const history = useHistory()
 
+  const [loading, setLoading] = useState(false)
+
   const handleSubmit = useCallback(
     async ({ email }: ForgotPasswordFormData): Promise<void> => {
+      setLoading(true)
       formRef.current?.setErrors({})
 
       try {
         await schema.validate({ email }, { abortEarly: false })
 
-        // recuperação de senha
+        api.post('/password/forgot', { email })
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           formRef.current?.setErrors(getValidationErrors(error))
@@ -62,21 +65,25 @@ const ForgotPassword: React.FC = () => {
           const { response } = error as ApiError
           addToast({
             type: 'error',
-            title: response?.data.title || 'Falha na autenticação',
+            title: response?.data.title || 'Falha na requisição',
             description:
               response?.data.message ||
-              'Verifique suas credenciais e tente novamente',
+              'Verifique os dados do formulário e tente novamente',
           })
         }
         return
+      } finally {
+        setLoading(false)
       }
 
       addToast({
         type: 'success',
-        title: 'Bem vindo',
+        title: 'E-mail de recuperação enviado',
+        description:
+          'Enviamos um e-mail para confirmar a recuperação de senha, cheque sua caixa de entrada',
       })
 
-      history.push('/signin')
+      history.push('/')
     },
     [addToast, history]
   )
@@ -92,7 +99,9 @@ const ForgotPassword: React.FC = () => {
 
             <Input name="email" placeholder="E-mail" Icon={FiMail} />
 
-            <Button type="submit">Recuperar</Button>
+            <Button type="submit" loading={loading}>
+              Recuperar
+            </Button>
           </Form>
 
           <Link to="/">
